@@ -1,0 +1,7 @@
+.settings/
+logs/
+node_modules/
+target/
+.classpath
+.factorypath
+.project
