@@ -1,0 +1,19 @@
+.layout {
+  display: grid;
+  grid-template-rows: 10% 90%;
+  grid-template-columns: 10% 90%;
+  grid-template-areas: 
+    ". ."
+    "nav page";
+  justify-content: center;
+}
+
+.header {
+  grid-area: header;
+}
+.nav {
+  grid-area: nav;
+}
+.page {
+  grid-area: page;
+}
