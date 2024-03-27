@@ -12,21 +12,6 @@ import { useDisclosure } from '@mantine/hooks';
 import NavBar                       from "/src/main/js/components/navbar/NavBar.jsx";
 import Header                       from "/src/main/js/components/header/Header.jsx";
 
-import classes                      from "./Root.module.css"
-
-/*
-export default function Root() {
-  return (
-    <>
-    <Header className="header"/>
-    <NavBar className="nav"/>
-    <Outlet className="page"/>
-    </>
-  )
-}
-*/
-
-
 export default function Root() {
     const [opened, { toggle }] = useDisclosure();
 

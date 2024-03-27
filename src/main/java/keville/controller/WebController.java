@@ -12,21 +12,8 @@ public class WebController {
 
     public WebController() {}
 
-    @GetMapping(value = { "/" })
+    @GetMapping(value = { "/", "/regions", "/events", "/compilers", "/about", "/home" })
     public String main() {
       return "main";
     }
-
-    @GetMapping(value = { "/test" })
-    public String test() {
-      return "test";
-    }
-
-    /*
-    @GetMapping(value = { "/login" })
-    public String login() {
-      return "login";
-    }
-    */
-
 }

@@ -10,14 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import io.netty.handler.codec.http.HttpResponseStatus;
+
 import org.springframework.security.core.Authentication;
 
+import keville.dto.CreateRegionDTO;
 import keville.dto.RegionDTO;
 import keville.exceptions.AuthorizationException;
 import keville.exceptions.ResourceNotFoundException;
@@ -26,7 +32,7 @@ import keville.services.region.RegionService;
 import keville.util.auth.AuthUtil;
 
 @RestController
-@RequestMapping("/api/region")
+@RequestMapping("/api/regions")
 public class RegionController {
 
   private static final Logger LOG = LoggerFactory.getLogger(RegionController.class);
@@ -42,19 +48,53 @@ public class RegionController {
     this.mapper = modelMapper;
   }
 
-  @PostMapping("/create")
+  @GetMapping("")
+  public Collection<RegionDTO> getRegions(
+      @Autowired Authentication authentication) {
+
+      // Return the regions applicable to the requester
+
+      Integer principalId = AuthUtil.getPrincipalUserId(authentication);
+
+      try {
+
+        Collection<Region> regions = regionService.getUserRegions(principalId);
+        Collection<RegionDTO> regionDTOs = regions.stream().map( x -> mapper.map(x,RegionDTO.class)).collect(Collectors.toSet());
+
+        return regionDTOs;
+
+      } catch (AuthorizationException ex) {
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+      }
+
+    }
+
+  @PostMapping("")
   public ResponseEntity<RegionDTO> createRegion(
-      @RequestBody RegionDTO regionDTO
-  ) {
+      @RequestBody CreateRegionDTO createRegionDTO,
+      @Autowired Authentication authentication) {
 
-      Region region = mapper.map(regionDTO,Region.class);
-      Region newRegion = regionService.createRegion(region);
-      RegionDTO newRegionDTO = mapper.map(newRegion,RegionDTO.class);
+      Integer principalId = AuthUtil.getPrincipalUserId(authentication);
 
-      return new ResponseEntity<RegionDTO>(newRegionDTO,HttpStatus.CREATED);
+      try {
+
+        //should this decoration be in the service method? (probably...)
+        Region region = mapper.map(createRegionDTO,Region.class);
+        region.owner = principalId;
+
+        Region newRegion = regionService.createRegion(region);
+        RegionDTO newRegionDTO = mapper.map(newRegion,RegionDTO.class);
+
+        return new ResponseEntity<RegionDTO>(newRegionDTO,HttpStatus.CREATED);
+
+      } catch (AuthorizationException ex) {
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      }
+
   }
 
-  @PostMapping("/{regionId}/update")
+
+  @PutMapping("/{regionId}")
   public RegionDTO updateRegion(
       @PathVariable("regionId") Integer regionId,
       @RequestBody RegionDTO regionUpdateDTO
@@ -79,28 +119,26 @@ public class RegionController {
       }
   }
 
-  @GetMapping("/user/{userId}")
-  public Collection<RegionDTO> getUserRegions(
-      @PathVariable("userId") Integer userId,
-      @Autowired Authentication authentication) {
-
-      //Only the matching userId should access this route
-      Integer principalId = AuthUtil.getPrincipalUserId(authentication);
-      if ( userId != principalId ) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-      }
+  @DeleteMapping("/{regionId}")
+  public ResponseEntity deleteRegion(
+      @PathVariable("regionId") Integer regionId
+    ) {
 
       try {
 
-        Collection<Region> regions = regionService.getUserRegions(userId);
-        Collection<RegionDTO> regionDTOs = regions.stream().map( x -> mapper.map(x,RegionDTO.class)).collect(Collectors.toSet());
+        regionService.deleteRegion(regionId);
+        return new ResponseEntity(HttpStatus.OK);
 
-        return regionDTOs;
-
-      } catch (AuthorizationException ex) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+      } catch (ResourceNotFoundException | AuthorizationException ex) {
+        if ( ex instanceof ResourceNotFoundException ) {
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND,ex.getMessage());
+        } else if ( ex instanceof AuthorizationException ) {
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        } else {
+          throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
       }
+  }
 
-    }
 
 }

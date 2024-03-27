@@ -13,3 +13,8 @@
   flex-direction: horizontal;
   gap: 10px;
 }
+
+.usernameSpan {
+  margin: auto;
+  font-weight: bold;
+}

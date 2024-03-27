@@ -1,0 +1,83 @@
+import  
+  React, { useMemo, useEffect, useState } from "react";
+import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from "mantine-react-table";
+import 'mantine-react-table/styles.css';  //make sure MRT styles were imported in your app root (once)
+import { 
+  QueryClient,
+  QueryClientProvider,
+  useQuery
+} from '@tanstack/react-query'
+
+type Region = {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
+export default function RegionsPage() {
+
+  const [data,setData] = useState([]);
+
+  useEffect( () => {
+
+    const fetchData = async () => {
+      console.log(`loading regions`)
+
+      const regionsResponse = await fetch("/api/region/user/1")
+      const regionJson = await regionsResponse.json()
+
+      const data: Region[] = []
+      regionJson.forEach ( region => data.push({
+        id: region.id,
+        name: region.name,
+        latitude: region.latitude,
+        longitude:region.longitude 
+      }))
+
+
+      console.log("data is ")
+      console.log(JSON.stringify(data))
+
+      setData(data)
+
+    }
+
+    fetchData()
+
+  },[]);
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: 'id',
+        header: "ID"
+      },
+      {
+        accessorKey: 'name',
+        header: "Name"
+      },
+      {
+        accessorKey: 'latitude',
+        header: "Latitude"
+      },
+      {
+        accessorKey: 'longitude',
+        header: "Longitude"
+      }
+    ],
+    []
+  );
+  
+  const table = useMantineReactTable({
+    columns,
+    data
+  });
+
+  return (
+    <>
+      Welcome to the regions page
+      <MantineReactTable table={table} />
+    </>
+  )
+}

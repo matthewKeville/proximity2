@@ -29,45 +29,37 @@ import '@mantine/core/styles.css';
 // // ...
 
 import ErrorPage                    from "/src/main/js/pages/error/ErrorPage.jsx";
-import RegionsPage                  from "/src/main/js/pages/regions/RegionsPage.jsx";
+import HomePage                     from "/src/main/js/pages/home/HomePage.jsx";
+import RegionsPage                  from "/src/main/js/pages/regions/RegionsPage.tsx";
 import EventsPage                   from "/src/main/js/pages/events/EventsPage.jsx";
 import Root                         from "/src/main/js/components/root/Root.jsx";
 
 async function rootLoader({params}) {
 
-  /*
-  const userInfoResponse = await fetch("/api/user/info");
-  var userInfo = await userInfoResponse.json()
-
-  if ( userInfoResponse.status != 200 || userInfo == null) {
-    console.log("there was an error getting user info")
-    userInfo = { id:-1, username:"error", isGuest:true }
-    return { userInfo }
-  }
-
-  return { userInfo };
-
-  */
+  const userInfoResponse = await fetch("/api/userinfo");
 
   var userInfo = {};
-  userInfo.username = "Guest"
-  userInfo.authenticated = false;
 
+  if ( userInfoResponse.ok) {
+    userInfo = await userInfoResponse.json()
+  }  else {
+    userInfo.username = "Guest"
+    userInfo.authenticated = false;
+  }
+
+  console.log( " userInfo is : " + JSON.stringify(userInfo) )
   return { userInfo }
 
 }
 
 const router = createBrowserRouter([
+  // this is the common root for logged in users ( has navbar links )
   {
     path: "/",
     element: <Root/>,
     loader: rootLoader,
     errorElement: <ErrorPage/>,
     children: [
-      {
-        path: "/home",
-        element: <></>
-      },
       {
         path: "/events",
         element: <EventsPage/>
@@ -81,6 +73,13 @@ const router = createBrowserRouter([
         element: <></>
       },
     ]
+  },
+  // this is intended for anyone (thus no navbar)
+  {
+    path: "/home",
+    element: <HomePage/>,
+    loader: rootLoader, /* note use of rootLoader, maybe this name should change */
+    errorElement: <ErrorPage/>,
   }
 ]);
 

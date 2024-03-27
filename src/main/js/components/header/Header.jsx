@@ -7,12 +7,10 @@ import { Button } from '@mantine/core';
 
 import classes from './Header.module.css';
 
-//const { userInfo } = useLoaderData();
-const userInfo = {}
-userInfo.authenticated = false;
-userInfo.username = "Guest 2";
-
 export default function Header() {
+
+  const { userInfo } = useLoaderData();
+
   return (
     <header className={classes.header}>
       <div className={classes.containerFlex}>
@@ -20,13 +18,15 @@ export default function Header() {
         <div></div>
         <div className={classes.buttonFlex}>
           {userInfo.authenticated
-            ? <> 
+            ?            
+              <>
+                <span className={classes.usernameSpan}>{userInfo.username}</span>
+                <Button variant="filled" color="red" onClick={() => {window.location.href="/logout"}  }>Logout</Button>
+              </>
+            :
+              <> 
                 <Button variant="outline" color="green" onClick={() => {window.location.href="/login"}  }>Login</Button>
                 <Button variant="filled"  color="green" onClick={() => {window.location.href="/signup"} }>Sign Up</Button>
-              </>
-            : <>
-                <div>{userInfo.username}</div>
-                <Button variant="filled" color="red" onClick={() => {window.location.href="/logout"}  }>Logout</Button>
               </>
           }
         </div>

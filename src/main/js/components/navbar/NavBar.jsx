@@ -1,35 +1,41 @@
-/*
-This uses Navbar Simple from 
-  https://ui.mantine.dev/category/navbars/
-as a base. Links are made to use react-router-dom with navigate hook.
-*/
-
-import React, { useState } from 'react';
-import { Group, Code } from '@mantine/core';
+import React, { useState, useEffect } from 'react';
 import {
-    IconHome,
     IconCalendarEvent,
     IconMap,
     IconBackhoe,
-    IconLogout,
 } from '@tabler/icons-react';
-import { MantineLogo } from '@mantinex/mantine-logo';
 
 import classes from './NavBar.module.css';
 
 import { useNavigate } from "react-router-dom";
 
 const data = [
-    { link: '/home', label: 'Home', icon: IconHome },
     { link: '/events', label: 'Events', icon: IconCalendarEvent },
     { link: '/regions', label: 'Regions', icon: IconMap },
-    { link: '/compilers', label: 'Compilers', icon: IconBackhoe },
+    { link: '/compilers', label: 'Compilers', icon: IconBackhoe }
 ];
 
 export default function NavBar() {
 
-    const [active, setActive] = useState('Home');
+    const [active, setActive] = useState('Events');
     const navigate = useNavigate();
+
+    const resolvePage = () => {
+      let path = window.location.pathname
+      let active = data.filter( page => page.link == path )
+      if (active.length > 0) {
+        setActive(active[0].label)
+      } else {
+        setActive('Events')
+      }
+    }
+
+    useEffect( 
+      () => {
+        resolvePage()
+      },
+      []
+    );
 
     const links = data.map((item) => (
           <a
@@ -53,13 +59,6 @@ export default function NavBar() {
           <nav className={classes.navbar}>
             <div className={classes.navbarMain}>
               {links}
-            </div>
-
-            <div className={classes.footer}>
-              <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
-                <IconLogout className={classes.linkIcon} stroke={1.5} />
-                <span>Logout</span>
-              </a>
             </div>
           </nav>
         );

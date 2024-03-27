@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,7 +40,9 @@ public class SecurityConfig {
         .requestMatchers(mvcMatcherBuilder.pattern("/css/style.css")).permitAll()
 
         .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
+        .requestMatchers(mvcMatcherBuilder.pattern("/api/userinfo")).permitAll()
         .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
+
         .anyRequest().authenticated()
 
       )
