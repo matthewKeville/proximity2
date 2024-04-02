@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
 
 import org.springframework.security.core.Authentication;
 
@@ -52,14 +51,13 @@ public class RegionController {
   public Collection<RegionDTO> getRegions(
       @Autowired Authentication authentication) {
 
-      // Return the regions applicable to the requester
-
+      //TODO : When RBA has { Admin , User } , call appropriate service method : { getRegions() , getUserRegions() }
       Integer principalId = AuthUtil.getPrincipalUserId(authentication);
 
       try {
 
         Collection<Region> regions = regionService.getUserRegions(principalId);
-        Collection<RegionDTO> regionDTOs = regions.stream().map( x -> mapper.map(x,RegionDTO.class)).collect(Collectors.toSet());
+        Collection<RegionDTO> regionDTOs = regions.stream().map( x -> mapper.map(x,RegionDTO.class)).collect(Collectors.toList());
 
         return regionDTOs;
 

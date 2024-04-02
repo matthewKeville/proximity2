@@ -1,6 +1,6 @@
 package keville.model.event;
 public enum EventTypeEnum {
-  DEV
+  DEV,
+  MEETUP
   //EVENTBRITE,
-  //MEETUP,
 }

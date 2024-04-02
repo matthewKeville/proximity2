@@ -14,6 +14,5 @@ public interface EventRepository extends CrudRepository<Event, Integer>{
   @Query("SELECT * FROM EVENT WHERE event_id = :eventId")
   Optional<Event> findByEventIdAndType(String eventId,EventTypeEnum type);
 
-  //Optional<Event> findUserEvents(String eventId,EventTypeEnum type);
 
 }

@@ -1,7 +1,7 @@
 package keville.util;
 
-import keville.model.event.location.LocationBuilder;
-import keville.model.event.EventBuilder;
+import keville.model.event.location.Location;
+import keville.model.event.Event;
 import keville.model.event.EventStatusEnum;
 
 import java.time.Instant;
@@ -20,12 +20,12 @@ public class SchemaUtil {
 
  private static Logger LOG = LoggerFactory.getLogger(SchemaUtil.class);
 
- public static EventBuilder createEventFromSchemaEvent(JsonObject eventJson) throws SchemaParseException {
+ public static Event.Builder createEventFromSchemaEvent(JsonObject eventJson) throws SchemaParseException {
 
       try {
 
-        EventBuilder eb = new EventBuilder();
-        LocationBuilder lb = new LocationBuilder();
+        Event.Builder eb = Event.builder();
+        Location.Builder lb = Location.builder();
 
         // parse event start
 

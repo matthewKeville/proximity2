@@ -59,6 +59,7 @@ const router = createBrowserRouter([
     element: <Root/>,
     loader: rootLoader,
     errorElement: <ErrorPage/>,
+    /*shouldRevalidate: () => true,*/
     children: [
       {
         path: "/events",

@@ -54,4 +54,72 @@ public class Location {
     return result;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public static class Builder {
+
+    public String name;
+    public String country;
+    public String region;
+    public String locality;
+    public String streetAddress;
+    public Double latitude;
+    public Double longitude;
+
+
+    public Builder setName(String name) {
+      this.name = name;
+      return this;
+    }
+
+    public Builder setCountry(String country) {
+      this.country = country;
+      return this;
+    }
+
+    public Builder setRegion(String region) {
+      this.region = region;
+      return this;
+    }
+
+    public Builder setLocality(String locality) {
+      this.locality = locality;
+      return this;
+    }
+
+    public Builder streetAddress(String streetAddress) {
+      this.streetAddress = streetAddress;
+      return this;
+    }
+
+    public Builder setLatitude(Double latitude) {
+      this.latitude = latitude;
+      return this;
+    }
+
+    public Builder setLongitude(Double longitude) {
+      this.longitude = longitude;
+      return this;
+    }
+
+    public Location build() {
+
+      Location location = 
+        new Location(
+            name,
+            country,
+            region,
+            locality,
+            streetAddress,
+            latitude,
+            longitude
+        );
+
+      return location;
+    }
+
+  }
+
 }

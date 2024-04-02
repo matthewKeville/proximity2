@@ -30,6 +30,6 @@ public abstract class SelfSchedulingBackgroundTask implements Runnable {
     taskScheduler.schedule(this,Instant.now().plus(delay));
   }
 
-  abstract void doTask();
+  protected abstract void doTask();
 
 }

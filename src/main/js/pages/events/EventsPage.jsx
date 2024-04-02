@@ -2,14 +2,21 @@ import
   React, { 
 } from "react";
 
-import classes from './EventsPage.module.css';
+import { 
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
+
+import EventsTable from "/src/main/js/pages/events/EventsTable.tsx";
+
+const queryClient = new QueryClient()
 
 export default function EventsPage() {
   return (
     <>
-      <div className={classes.tester}>
-      Welcome to the events page
-      </div>
+      <QueryClientProvider client={queryClient}>
+        <EventsTable/>
+      </QueryClientProvider>
     </>
   )
 }

@@ -34,7 +34,7 @@ public class DefaultRegionService implements RegionService {
     Integer principalId = AuthUtil.getPrincipalUserId(authentication);
 
     if (!userId.equals(principalId)) {
-      throw new AuthorizationException("principal " + principalId + " can't access " + userId + " events");
+      throw new AuthorizationException("principal " + principalId + " can't access " + userId + " regions");
     }
 
     return Iterables.toList(regionRepository.findUserRegions(userId));
