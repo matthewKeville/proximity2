@@ -51,9 +51,11 @@ public class DefaultEventService implements EventService {
     Collection<Region> regions = Iterables.toList(regionRepository.findUserRegions(userId));
     Collection<Event> events = Iterables.toList(eventRepository.findAll());
 
-    events = events.stream().filter( e -> ( 
+    events = events.stream()
+      .filter( e -> e.location.latitude != null && e.location.longitude != null )
+      .filter( e -> ( 
       regions.stream().anyMatch( reg -> (  
-        GeoUtils.sphericalDistance(
+        e.isVirtual || GeoUtils.sphericalDistance(
           new Point(e.location.latitude,e.location.longitude),
           new Point(reg.latitude,reg.longitude)
         ) < reg.radius

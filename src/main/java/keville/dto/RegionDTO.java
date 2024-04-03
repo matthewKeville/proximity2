@@ -15,6 +15,7 @@ public class RegionDTO {
   public double radius;
   public double longitude;
   public double latitude;
+  public boolean isDisabled;
   public LocalDateTime lastScan;
 
 }

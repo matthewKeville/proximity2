@@ -1,6 +1,7 @@
 package keville.background.scanner;
 
 import keville.background.SelfSchedulingBackgroundTask;
+import keville.background.scanner.Meetup.DefaultMeetupScanner;
 import keville.background.scanner.dev.DevScanner;
 import keville.model.event.EventTypeEnum;
 import keville.model.region.Region;
@@ -37,14 +38,18 @@ public class RegionScannerService extends SelfSchedulingBackgroundTask {
   public RegionScannerService(
       @Autowired RegionRepository regionRepository,
       @Autowired EventRepository eventRepository,
-      @Autowired TaskScheduler taskScheduler
+      @Autowired TaskScheduler taskScheduler,
+      @Autowired DefaultMeetupScanner meetupScanner
       ) {
 
     super(taskScheduler,startupDelay,delay,"Region Scanner BG Service");
     this.regionRepository = regionRepository;
     this.eventRepository = eventRepository;
-    createScannerDelegateMap(); //perhaps this should be the responsibility of the service
-                                //another candidate for autowiring
+
+    //this probably belongs in a seperate class (injected into this one)
+    this.scanners = new HashMap<EventTypeEnum,EventScanner>();
+    this.scanners.put(EventTypeEnum.DEV,new DevScanner());
+    this.scanners.put(EventTypeEnum.MEETUP,meetupScanner);
   }
 
   /*
@@ -61,12 +66,9 @@ public class RegionScannerService extends SelfSchedulingBackgroundTask {
     LOG.info("checking scan candidancy for " + allRegions.size() + " regions");
 
     for ( Region region : allRegions ) {
-
-      //TODO : set as configurable
-      if ( region.lastScan.isBefore(LocalDateTime.now().minusDays(1)) ) { 
+      if ( shouldScan(region) ) {
         regionsToBeScanned.add(region);
       }
-
     }
 
     if (regionsToBeScanned.size() == 0) {
@@ -76,6 +78,19 @@ public class RegionScannerService extends SelfSchedulingBackgroundTask {
     // Scan one region against all providers
     Region region = regionsToBeScanned.get(0);
     scanRegion(region);
+
+  }
+
+  private boolean shouldScan(Region region) {
+
+    if ( region.forceScan ) {
+      return true;
+    }
+
+    if ( region.lastScan.isAfter(LocalDateTime.now().minusDays(1)) ) { 
+      return false;
+    }
+    return !region.isDisabled;
 
   }
 
@@ -97,7 +112,7 @@ public class RegionScannerService extends SelfSchedulingBackgroundTask {
         LOG.info("Scan success for " + region.toString() + " for provider " + source.toString()); 
       }
 
-      //Save new events
+      //Update DB
  
       scanReport.events
         .stream()
@@ -105,14 +120,12 @@ public class RegionScannerService extends SelfSchedulingBackgroundTask {
         .forEach( event -> eventRepository.save(event)
       );
 
+      region.lastScan = LocalDateTime.now();
+      region.forceScan = false;
+      regionRepository.save(region);
+
     }
 
   }
-
-  private void createScannerDelegateMap() {
-    this.scanners = new HashMap<EventTypeEnum,EventScanner>();
-    this.scanners.put(EventTypeEnum.DEV,new DevScanner());
-  }
-
 
 }

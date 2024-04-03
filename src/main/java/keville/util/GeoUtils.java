@@ -10,14 +10,12 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.rmi.RemoteException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
 
 import org.springframework.data.geo.Point;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.stream.MalformedJsonException;
 
 import keville.model.event.location.Location;
 import keville.model.event.location.USStateAndTerritoryCodes;
@@ -54,6 +52,7 @@ public class GeoUtils {
     return ( theta * Math.PI / 180 ) * radius;
   }
 
+  //Perhaps this belongs in its own class
   public static Location getLocationFromGeoCoordinates(double latitude, double longitude) throws RemoteException {
     int attempt = 0;
     while ( attempt < maxGeoFetchAttempts ) { 

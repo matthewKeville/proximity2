@@ -227,15 +227,17 @@ public class MeetupHarProcessor {
     }
 
     if (node.has("description")) {
-      eb.setName(node.get("description").getAsString());
+      eb.setDescription(node.get("description").getAsString());
     }
 
     if (node.has("venue")) {
+
       JsonElement venueElement = node.get("venue");
 
       if ( !venueElement.isJsonNull() ) {
 
-        JsonObject venue= venueElement.getAsJsonObject();
+        JsonObject venue = venueElement.getAsJsonObject();
+
 
         if ( venue.has("city") ) {
           //Spring Lake
@@ -249,10 +251,17 @@ public class MeetupHarProcessor {
           lb.setCountry(venue.get("country").getAsString());
         }
 
-        if ( venue.has("lat") && venue.has("lng")) {
+        if ( venue.has("lat") && venue.has("lon")) {
+
           lb.setLatitude(venue.get("lat").getAsDouble());
-          lb.setLongitude(venue.get("lng").getAsDouble());
-        } 
+          lb.setLongitude(venue.get("lon").getAsDouble());
+
+        } else {
+
+          LOG.warn(" missing geocoordinate data for event venue ");
+          LOG.warn(venue.toString());
+
+        }
 
         if ( venue.has("name") ) {
           lb.setName(venue.get("name").getAsString());

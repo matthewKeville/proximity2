@@ -1,9 +1,17 @@
 package keville.model.event.location;
 
+import org.springframework.data.relational.core.mapping.Column;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Location {
 
   //country, region, locality tries to emulate ISO-3166-2
   //https://en.wikipedia.org/wiki/ISO_3166-2
+  @Column("LOCATION_NAME")
   public String name;
   public String country;
   public String region;

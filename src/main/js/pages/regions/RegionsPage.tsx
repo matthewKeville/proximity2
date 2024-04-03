@@ -47,6 +47,7 @@ type Region = {
   radius: number;
   latitude: number;
   longitude: number;
+  isDisabled: boolean; //boolean?
 }
 
 const queryClient = new QueryClient()
@@ -189,6 +190,13 @@ function RegionsTable() {
       {
         accessorKey: 'longitude',
         header: "Longitude"
+      },
+      {
+        id: 'isDisabled',
+        accessorFn: (row) => { 
+          return row.isDisabled ? " false " : " true "
+        } ,
+        header: "Active"
       }
     ],
     []

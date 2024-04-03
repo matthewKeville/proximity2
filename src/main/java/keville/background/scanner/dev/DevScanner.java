@@ -36,7 +36,7 @@ public class DevScanner implements EventScanner {
 
     List<Event> events = new LinkedList<Event>();
     Random random = new Random();
-    int eventCount = random.nextInt(10);
+    int eventCount = random.nextInt(2);
 
     for ( int i = 0; i < eventCount; i++ ) { 
 
@@ -44,7 +44,7 @@ public class DevScanner implements EventScanner {
       event.eventId = Instant.now().toString();
       event.eventType = EventTypeEnum.DEV;
       event.name = topics[random.nextInt(topics.length-1)] + " " + activities[random.nextInt(activities.length-1)];
-      event.description = " a dummy event where stuff will happen ";
+      event.description = topics[random.nextInt(topics.length-1)] + " " + activities[random.nextInt(activities.length-1)];
       event.start = LocalDateTime.now();
       event.start = LocalDateTime.now().plusHours(random.nextInt(666));
       event.end = event.start.plusHours(random.nextInt(6));

@@ -21,6 +21,10 @@ public class Region {
   public double radius;
   public double longitude;
   public double latitude;
+  public boolean isDisabled;
+  /* will cause region to be scanned immediately regardless of disability or lastScan*/
+  @Column(value = "FORCE_SCAN")
+  public boolean forceScan;
   @Column(value = "LAST_SCAN")
   public LocalDateTime lastScan;
 
