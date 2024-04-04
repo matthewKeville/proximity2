@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.rmi.RemoteException;
 
+import org.junit.jupiter.api.Test;
+
 import keville.model.event.location.Location;
 import keville.util.GeoUtils;
-
-import org.junit.jupiter.api.Test;
 
 public class GeoUtilsTest 
 {

@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import keville.background.scanner.ScanReport;
-import keville.background.scanner.Meetup.MeetupScanner;
+import keville.aggregator.hosts.Meetup.MeetupScanner;
+import keville.aggregator.scanner.ScanReport;
 import keville.model.region.Region;
 
 // need to fix this to get only the needed slice of the spring context,

@@ -1,6 +1,5 @@
 package keville.model.event;
 
-import keville.model.event.location.Location;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +8,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Table;
+
+import keville.model.event.location.Location;
 
 import java.time.LocalDateTime;
 
