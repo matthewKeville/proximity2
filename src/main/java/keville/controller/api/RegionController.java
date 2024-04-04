@@ -24,9 +24,11 @@ import org.springframework.security.core.Authentication;
 
 import keville.dto.CreateRegionDTO;
 import keville.dto.RegionDTO;
+import keville.dto.RegionUpdateDTO;
 import keville.exceptions.AuthorizationException;
 import keville.exceptions.ResourceNotFoundException;
 import keville.model.region.Region;
+import keville.model.region.RegionUpdate;
 import keville.services.region.RegionService;
 import keville.util.auth.AuthUtil;
 
@@ -95,12 +97,12 @@ public class RegionController {
   @PutMapping("/{regionId}")
   public RegionDTO updateRegion(
       @PathVariable("regionId") Integer regionId,
-      @RequestBody RegionDTO regionUpdateDTO
+      @RequestBody RegionUpdateDTO regionUpdateDTO
     ) {
 
       try {
 
-        Region regionUpdate = mapper.map(regionUpdateDTO,Region.class);
+        RegionUpdate regionUpdate = mapper.map(regionUpdateDTO,RegionUpdate.class);
         Region region = regionService.updateRegion(regionUpdate);
         RegionDTO regionDTO = mapper.map(region,RegionDTO.class);
 

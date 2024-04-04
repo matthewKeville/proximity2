@@ -44,10 +44,14 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 type Region = {
   id: number;
   name: string;
+  owner: number;
   radius: number;
   latitude: number;
   longitude: number;
   isDisabled: boolean; //boolean?
+  //isDisabled: string; //boolean?
+  forceScan: boolean; //boolean?
+  lastScan: string;
 }
 
 const queryClient = new QueryClient()
@@ -84,6 +88,33 @@ function useCreateRegion() {
       .then((response) => response.json());
     },
 
+    onSuccess: async () => await queryClient.invalidateQueries({ queryKey: ['regions'] }),
+
+  });
+}
+
+//UPDATE hook (put user in api)
+function useUpdateRegion() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (region: Region) => {
+      fetch(`/api/regions/${region.id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          id: region.id,
+          name: region.name,
+          radius: region.radius,
+          latitude: region.latitude,
+          longitude: region.longitude,
+          isDisabled: region.isDisabled
+          //isForced: region.isForced,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      })
+      .then((response) => response.json());
+    },
     onSuccess: async () => await queryClient.invalidateQueries({ queryKey: ['regions'] }),
 
   });
@@ -129,6 +160,10 @@ function RegionsTable() {
     isPending: isCreatingRegion 
   } = useCreateRegion()
 
+   const { 
+     mutateAsync: updateRegion, isPending: isUpdatingRegion 
+   } = useUpdateRegion();
+
   //delete Region
   const { 
     mutateAsync: deleteRegion, 
@@ -151,6 +186,24 @@ function RegionsTable() {
     await createRegion(values);
     exitCreatingMode(); 
   }
+
+  const handleSaveRegion: MRT_TableOptions<Region>['onEditingRowSave'] = async ({
+    values,
+    table,
+   }) => {
+
+   /*
+    const newValidationErrors = validateRegion(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
+    setValidationErrors({});
+    */
+
+    await updateRegion(values);
+    table.setEditingRow(null); //exit editing mode
+  };
   
   const openDeleteConfirmModal = (row: MRT_Row<Region>) =>
     modals.openConfirmModal({
@@ -173,7 +226,8 @@ function RegionsTable() {
         header: "ID",
         //It is not clear from the docs how to hide fields in the edit/create modal. This appears to work
         //https://stackoverflow.com/questions/76869302/is-there-a-way-to-disable-or-hide-fields-of-create-new-item-modal-of-material
-        Edit: () => null,
+        //Edit: () => null,   //removes entirely
+        enableEditing: false  //prevents manipulation
       },
       {
         accessorKey: 'name',
@@ -192,11 +246,19 @@ function RegionsTable() {
         header: "Longitude"
       },
       {
+        /*
         id: 'isDisabled',
         accessorFn: (row) => { 
           return row.isDisabled ? " false " : " true "
         } ,
-        header: "Active"
+        */
+        accessorKey: 'isDisabled',
+        header: "Disabled",
+        Cell: ( { cell, column } ) => (
+          <div>
+            {cell.row.original.isDisabled ? " true " : " false "}
+          </div>
+        ),
       }
     ],
     []
@@ -207,6 +269,7 @@ function RegionsTable() {
     data: fetchedRegions,
     onCreatingRowSave: handleCreateRegion,
     createDisplayMode: 'modal',
+    onEditingRowSave: handleSaveRegion,
 
     renderCreateRowModalContent: ({ table, row, internalEditComponents }) => (
      <Stack>
@@ -233,6 +296,11 @@ function RegionsTable() {
         <Tooltip label="Delete">
           <ActionIcon color="red" onClick={() => openDeleteConfirmModal(row)}>
             <IconTrash />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Edit">
+          <ActionIcon onClick={() => table.setEditingRow(row)}>
+            <IconEdit />
           </ActionIcon>
         </Tooltip>
       </Flex>

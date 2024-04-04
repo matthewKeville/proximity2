@@ -7,16 +7,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RegionDTO {
+public class RegionUpdateDTO {
 
   public Integer id;
   public String name;
-  public Integer owner;
   public double radius;
   public double longitude;
   public double latitude;
   public boolean isDisabled;
   public boolean forceScan;
-  public LocalDateTime lastScan;
 
 }

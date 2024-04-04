@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import keville.exceptions.AuthorizationException;
 import keville.exceptions.ResourceNotFoundException;
 import keville.model.region.Region;
+import keville.model.region.RegionUpdate;
 import keville.repository.RegionRepository;
 import keville.util.Iterables;
 import keville.util.auth.AuthUtil;
@@ -58,12 +59,12 @@ public class DefaultRegionService implements RegionService {
   } 
 
   @Override
-  public Region updateRegion(Region regionUpdate) throws AuthorizationException,ResourceNotFoundException {
+  public Region updateRegion(RegionUpdate update) throws AuthorizationException,ResourceNotFoundException {
 
     //region exists?
-    Optional<Region> regionOpt = regionRepository.findById(regionUpdate.id);
+    Optional<Region> regionOpt = regionRepository.findById(update.id);
     if ( regionOpt.isEmpty() ) {
-      throw new ResourceNotFoundException("region " + regionUpdate.id + " not found");
+      throw new ResourceNotFoundException("region " + update.id + " not found");
     }
     Region region = regionOpt.get();
 
@@ -74,8 +75,18 @@ public class DefaultRegionService implements RegionService {
       throw new AuthorizationException("principal " + principalId + " can't update " + region.owner + "'s region");
     }
 
-    //update region TODO : bussiness logic
-    return regionRepository.save(regionUpdate);
+    //apply update to region
+    //TODO : streamline the partial updating of resources (perhaps a custom ModelMapper cfg)
+    region.name = update.name;
+    region.radius = update.radius;
+    region.latitude = update.latitude;
+    region.longitude = update.longitude;
+    region.isDisabled = update.isDisabled;
+    region.forceScan = update.forceScan;
+
+    //TODO : Apply bussiness logic (no negative radius, radius limit) ...
+
+    return regionRepository.save(region);
 
   } 
 

@@ -1,4 +1,4 @@
-package keville.dto;
+package keville.model.region;
 
 import java.time.LocalDateTime;
 
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RegionDTO {
+public class RegionUpdate {
 
   public Integer id;
   public String name;
@@ -17,6 +17,5 @@ public class RegionDTO {
   public double latitude;
   public boolean isDisabled;
   public boolean forceScan;
-  public LocalDateTime lastScan;
 
 }
