@@ -52,6 +52,16 @@ public class GeoUtils {
     return ( theta * Math.PI / 180 ) * radius;
   }
 
+
+  //return a spherical rectangle circumscribing the spherical cap 
+  public static BBox sphericalCapBbox(double latitude, double longitude, double radius) {
+    return 
+      new BBox(
+          new Point(latitude - radius, longitude - radius), // bottom right
+          new Point(latitude + radius, longitude + radius)  // top left
+      );
+  }
+
   //Perhaps this belongs in its own class
   public static Location getLocationFromGeoCoordinates(double latitude, double longitude) throws RemoteException {
     int attempt = 0;
@@ -130,5 +140,13 @@ public class GeoUtils {
     return result;
     
   }
+
+  /**
+   * a (upper right corner)
+   * b (lower left corner)
+   * p.x latitude
+   * p.y longitude
+   */
+  public record BBox(Point a,Point b){};
 
 }

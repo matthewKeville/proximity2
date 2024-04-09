@@ -54,10 +54,11 @@ const colSizeBase = 180;
 function getEventTypeImage(row) {
 
   switch(row.eventType) {
-    case "DEV":
+    case "EVENTBRITE":
       return "/favicons/eventbrite-favicon.ico";
     case "MEETUP":
       return "/favicons/meetup-favicon.ico";
+    case "DEV":
     defafult:
       return "/favicons/favicon.ico";
   }
@@ -68,7 +69,6 @@ function getDateDisplay(row) {
 
   //let date: Date = new Date(Date.parse(row.start))
   let date: Date = new Date(row.start)
-  console.log(date)
 
   let weekday = ""
 

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
+import keville.aggregator.hosts.Eventbrite.DefaultEventbriteScanner;
 import keville.aggregator.hosts.Meetup.DefaultMeetupScanner;
 import keville.aggregator.hosts.dev.DevScanner;
 import keville.aggregator.scanner.EventScanner;
@@ -40,7 +41,8 @@ public class RegionScannerService extends SelfSchedulingBackgroundTask {
       @Autowired RegionRepository regionRepository,
       @Autowired EventRepository eventRepository,
       @Autowired TaskScheduler taskScheduler,
-      @Autowired DefaultMeetupScanner meetupScanner
+      @Autowired DefaultMeetupScanner meetupScanner,
+      @Autowired DefaultEventbriteScanner eventbriteScanner
       ) {
 
     super(taskScheduler,startupDelay,delay,"Region Scanner BG Service");
@@ -51,6 +53,7 @@ public class RegionScannerService extends SelfSchedulingBackgroundTask {
     this.scanners = new HashMap<EventTypeEnum,EventScanner>();
     this.scanners.put(EventTypeEnum.DEV,new DevScanner());
     this.scanners.put(EventTypeEnum.MEETUP,meetupScanner);
+    this.scanners.put(EventTypeEnum.EVENTBRITE,eventbriteScanner);
   }
 
   /*
