@@ -65,48 +65,22 @@ function getEventTypeImage(row) {
 
 }
 
-function getDateDisplay(row) {
-
-  //let date: Date = new Date(Date.parse(row.start))
+function getDate(row) {
   let date: Date = new Date(row.start)
+  return `${date.getMonth()+1}/${date.getDate()}`
+}
 
-  let weekday = ""
-
-  switch(date.getDay()) {
-    case 0:
-      weekday = "Sunday"
-      break;
-    case 1:
-      weekday = "Monday"
-      break;
-    case 2:
-      weekday = "Tuesday"
-      break;
-    case 3:
-      weekday = "Wednesday"
-      break;
-    case 4:
-      weekday = "Thursday"
-      break;
-    case 5:
-      weekday = "Friday"
-      break;
-    case 6:
-      weekday = "Saturday"
-      break;
+function getTime(row) {
+  let date: Date = new Date(row.start)
+  let minutes = date.getMinutes()
+  let minuteStr = minutes.toString()
+  if (minutes < 10) {
+    minuteStr = `0${minuteStr}`
   }
-
-  let shortTime = ""
-
-  if ( date.getHours() > 12 ) { 
-    shortTime = date.getHours()-12 + ":" + date.getMinutes() + " PM";
-  } else {
-    shortTime = date.getHours() + ":" + date.getMinutes() + " AM";
-  }
-
-  //return weekday + " " + date.getDate() + " " + shortTime;
-  return `${weekday} ${date.getMonth()}/${date.getDate()} ${shortTime}`
-
+  return date.getHours() > 12 ? 
+    `${date.getHours()-12} :  ${minuteStr} PM`
+  :
+    `${date.getHours()   } :  ${minuteStr} AM`;
 }
 
 
@@ -154,6 +128,7 @@ export default function EventsTable() {
         } ,
         header: "Description"
       },
+      /*
       {
         accessorKey: 'start',
         header: "Start*",
@@ -163,19 +138,41 @@ export default function EventsTable() {
           </div>
         )
       },
+      */
       {
-        accessorKey: 'location',
-        header: "Location",
-        Cell: ( { cell, column } ) => (
-          <div>
-          { 
-            cell.row.original.isVirtual ? 
-              <span> Online</span> 
-            : 
-              <span> {cell.row.original.location.name} : {cell.row.original.location.locality} , {cell.row.original.location.region} </span> 
-          }
-          </div>
-        )
+        header: "Date",
+        id: 'date',
+        accessorFn: (row) => { 
+          return getDate(row)
+        }
+      },
+      {
+        header: "Time",
+        id: 'time',
+        accessorFn: (row) => { 
+          return getTime(row)
+        }
+      },
+      {
+        header: "Venue",
+        id: 'venue',
+        accessorFn: (row) => { 
+          return row.isVirtual ? "N/A" : row.location.name
+        }
+      },
+      {
+        header: "Region",
+        id: 'region',
+        accessorFn: (row) => { 
+          return row.isVirtual ? "N/A" : row.location.region
+        }
+      },
+      {
+        header: "Locality",
+        id: 'locality',
+        accessorFn: (row) => { 
+          return row.isVirtual ? "N/A" : row.location.locality
+        }
       },
     ],
     []
