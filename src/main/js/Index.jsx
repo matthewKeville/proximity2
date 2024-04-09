@@ -30,6 +30,7 @@ import '@mantine/core/styles.css';
 
 import ErrorPage                    from "/src/main/js/pages/error/ErrorPage.jsx";
 import HomePage                     from "/src/main/js/pages/home/HomePage.jsx";
+import SplashPage                   from "/src/main/js/pages/splash/SplashPage.jsx";
 import RegionsPage                  from "/src/main/js/pages/regions/RegionsPage.tsx";
 import EventsPage                   from "/src/main/js/pages/events/EventsPage.jsx";
 import Root                         from "/src/main/js/components/root/Root.jsx";
@@ -55,30 +56,33 @@ async function rootLoader({params}) {
 const router = createBrowserRouter([
   // this is the common root for logged in users ( has navbar links )
   {
-    path: "/",
+    path: "/user",
     element: <Root/>,
     loader: rootLoader,
     errorElement: <ErrorPage/>,
-    /*shouldRevalidate: () => true,*/
     children: [
       {
-        path: "/events",
+        path: "home",
+        element: <HomePage/>
+      },
+      {
+        path: "events",
         element: <EventsPage/>
       },
       {
-        path: "/regions",
+        path: "regions",
         element: <RegionsPage/>
       },
       {
-        path: "/compilers",
+        path: "compilers",
         element: <></>
       },
     ]
   },
   // this is intended for anyone (thus no navbar)
   {
-    path: "/home",
-    element: <HomePage/>,
+    path: "/",
+    element: <SplashPage/>,
     loader: rootLoader, /* note use of rootLoader, maybe this name should change */
     errorElement: <ErrorPage/>,
   }

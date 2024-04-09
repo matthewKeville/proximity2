@@ -12,7 +12,7 @@ public class WebController {
 
     public WebController() {}
 
-    @GetMapping(value = { "/", "/regions", "/events", "/compilers", "/about", "/home" })
+    @GetMapping(value = { "/", "/user/home", "/user/regions", "/user/events", "/user/compilers" })
     public String main() {
       return "main";
     }

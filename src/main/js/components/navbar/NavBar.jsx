@@ -10,9 +10,10 @@ import classes from './NavBar.module.css';
 import { useNavigate } from "react-router-dom";
 
 const data = [
-    { link: '/events', label: 'Events', icon: IconCalendarEvent },
-    { link: '/regions', label: 'Regions', icon: IconMap },
-    { link: '/compilers', label: 'Compilers', icon: IconBackhoe }
+    { link: '/user/home', label: 'Home', icon: IconCalendarEvent },
+    { link: '/user/events', label: 'Events', icon: IconCalendarEvent },
+    { link: '/user/regions', label: 'Regions', icon: IconMap },
+    { link: '/user/compilers', label: 'Compilers', icon: IconBackhoe }
 ];
 
 export default function NavBar() {

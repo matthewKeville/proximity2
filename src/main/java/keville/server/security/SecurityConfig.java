@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,11 +17,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
+
+  @Autowired
+  private AuthenticationSuccessHandler authenticationSuccessHandler;
 
   @Bean
   public SecurityFilterChain securityFilterChain(@Autowired HttpSecurity http,
@@ -32,21 +34,38 @@ public class SecurityConfig {
     return http
 
       .csrf(csrf -> csrf.disable())
-      .formLogin(withDefaults())
-      .logout((logout) -> logout.permitAll())
+      .formLogin((form) -> form
+          .permitAll()
+          .loginPage("/login")
+          .successHandler( authenticationSuccessHandler )
+      )
+
+      .logout((logout) -> logout
+          .permitAll()
+          .logoutSuccessUrl("/")
+      )
       .authorizeHttpRequests( request -> request
 
+        //static resources
         .requestMatchers(mvcMatcherBuilder.pattern("/built/bundle.js")).permitAll()
         .requestMatchers(mvcMatcherBuilder.pattern("/css/style.css")).permitAll()
 
+        //web pages (non-auth)
         .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
-        .requestMatchers(mvcMatcherBuilder.pattern("/api/userinfo")).permitAll()
         .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
+
+        .requestMatchers(mvcMatcherBuilder.pattern("/signup")).permitAll()
+        .requestMatchers(mvcMatcherBuilder.pattern("/login")).permitAll()
+        .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST,"/login")).permitAll()
+        .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/register")).permitAll()
+
+        //api exposure
+        .requestMatchers(mvcMatcherBuilder.pattern("/api/userinfo")).permitAll()
 
         .anyRequest().authenticated()
 
       )
-      .httpBasic(withDefaults())
+      //.httpBasic(withDefaults())
       .build();
   }
 
