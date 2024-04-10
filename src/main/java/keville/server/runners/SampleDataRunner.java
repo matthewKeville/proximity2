@@ -82,14 +82,12 @@ public class SampleDataRunner implements CommandLineRunner {
       philly.longitude = -74.0218;
       philly.radius = 5.0;
       philly.lastScan = LocalDateTime.ofInstant(Instant.EPOCH,ZoneOffset.UTC);
-      philly.isDisabled = true;
+      philly.isDisabled = false;
       regionRepository.save(philly);
 
-      User dev2 = new User("dev2","dev2@email.com","{noop}dev2");
-      dev2 = userRepository.save(dev2);
 
       Region chicago = new Region();
-      chicago.owner = dev2.id;
+      chicago.owner = dev.id;
       chicago.name = "chicago";
       chicago.latitude = 41.8781;
       chicago.longitude = -87.6298;
@@ -97,6 +95,19 @@ public class SampleDataRunner implements CommandLineRunner {
       chicago.lastScan = LocalDateTime.ofInstant(Instant.EPOCH,ZoneOffset.UTC);
       chicago.isDisabled = true;
       regionRepository.save(chicago);
+
+      User dev2 = new User("dev2","dev2@email.com","{noop}dev2");
+      dev2 = userRepository.save(dev2);
+
+      Region chicago2 = new Region();
+      chicago.owner = dev2.id;
+      chicago.name = "chicago 2 electric boogalo";
+      chicago.latitude = 41.8781;
+      chicago.longitude = -87.6298;
+      chicago.radius = 3.0;
+      chicago.lastScan = LocalDateTime.ofInstant(Instant.EPOCH,ZoneOffset.UTC);
+      chicago.isDisabled = true;
+      regionRepository.save(chicago2);
       
       System.exit(0);
 
