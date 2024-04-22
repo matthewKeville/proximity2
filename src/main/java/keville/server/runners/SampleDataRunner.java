@@ -78,8 +78,8 @@ public class SampleDataRunner implements CommandLineRunner {
       Region philly = new Region();
       philly.owner = dev.id;
       philly.name = "philly";
-      philly.latitude = 40.1784;
-      philly.longitude = -74.0218;
+      philly.latitude = 39.9525;
+      philly.longitude = -75.1652;
       philly.radius = 5.0;
       philly.lastScan = LocalDateTime.ofInstant(Instant.EPOCH,ZoneOffset.UTC);
       philly.isDisabled = false;

@@ -18,7 +18,7 @@ public class Region {
   public Integer id;
   public String name;
   public Integer owner; //agr
-  public double radius;
+  public double radius; //miles
   public double longitude;
   public double latitude;
   public boolean isDisabled;

@@ -45,11 +45,14 @@ public class GeoUtils {
    *
    */
   public static double sphericalDistance(Point p0,Point p1) {
-    double epsilon = hav(p1.getX() - p0.getX()) + ( Math.cos(p0.getX())*Math.cos(p1.getX())*hav(p1.getY()-p0.getY()) );
-    double theta =  ahav(epsilon);
+    double lat0 = p0.getX() * ( Math.PI / 180 );
+    double lon0 = p0.getY() * ( Math.PI / 180 );
+    double lat1 = p1.getX() * ( Math.PI / 180 );
+    double lon1 = p1.getY() * ( Math.PI / 180 );
+    double havTheta = hav(lat1-lat0) + ( Math.cos(lat0) * Math.cos(lat1) * hav(lon1-lon0) );
+    double theta =  ahav(havTheta);
     double radius = 6371; // radius of the Earth in km
-    //arc length angle should be in radians
-    return ( theta * Math.PI / 180 ) * radius;
+    return theta * radius;
   }
 
 
@@ -139,6 +142,10 @@ public class GeoUtils {
 
     return result;
     
+  }
+
+  public static double ToMiles(double kilometers) {
+    return kilometers*0.621371;
   }
 
   /**

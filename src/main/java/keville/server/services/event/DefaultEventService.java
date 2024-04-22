@@ -1,6 +1,9 @@
 package keville.server.services.event;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -50,21 +53,32 @@ public class DefaultEventService implements EventService {
     //TODO : move query up to database
     Collection<Region> regions = Iterables.toList(regionRepository.findUserRegions(userId));
     Collection<Event> events = Iterables.toList(eventRepository.findAll());
+    List<Event> qualifiedEvents = new LinkedList<Event>();
 
-    events = events.stream()
-      .filter( e -> e.location.latitude != null && e.location.longitude != null )
-      .filter( e -> ( 
-      regions.stream().anyMatch( reg -> (  
-        e.isVirtual || GeoUtils.sphericalDistance(
-          new Point(e.location.latitude,e.location.longitude),
-          new Point(reg.latitude,reg.longitude)
-        ) < reg.radius
-        )
-      )
-    )).collect(Collectors.toList());
+    for ( Event event : events ) {
 
+      boolean anyMatch = event.isVirtual; //virtual events auto included
+      Iterator<Region> iterator = regions.iterator();
+      while ( !anyMatch && iterator.hasNext() ) { //otr, in a user region?
+        Region region = iterator.next();
+        if ( event.location.latitude == null || event.location.longitude == null ) {
+          LOG.debug("non virtual event with missing geo location data " + event.id);
+          continue;
+        }
+        double distance =  GeoUtils.sphericalDistance(
+          new Point(event.location.latitude,event.location.longitude),
+          new Point(region.latitude,region.longitude));
+        if ( GeoUtils.ToMiles(distance) < region.radius ) {
+          anyMatch = true;
+        }
+      }
 
-    return events;
+      if ( anyMatch ) {
+        qualifiedEvents.add(event);
+      }
+    }
+
+    return qualifiedEvents;
 
   }
 
