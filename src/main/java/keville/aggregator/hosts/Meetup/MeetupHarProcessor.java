@@ -180,17 +180,21 @@ public class MeetupHarProcessor {
 
 
   /*
-   * We anticipate two response type from the POST to /gql2 , one that has the chain of fields
-   * data.result.edges and one that has data.conversations, that latter is irrelevant 
+   * We anticipate a response from the POST to /gql2 , that contains Event Data
    */
   private static JsonArray extractEdgesFromRawGqLJson(String rawGqlJsonString) throws JsonParseException {
     JsonObject jsonData = JsonParser.parseString(rawGqlJsonString).getAsJsonObject();
-    //this response has no event data
-    if ( jsonData.get("data").getAsJsonObject().has("conversations") ) {
-      return new JsonArray();
-    }
-    //this is the anticipated response
-    return jsonData.get("data").getAsJsonObject().get("result").getAsJsonObject().get("edges").getAsJsonArray();
+    //this response has new event data : data . result . __typename == "RecommendedEventsConnection"
+    if ( jsonData.get("data").getAsJsonObject().has("result") ) {
+      JsonObject jsonDataResult = jsonData.get("data").getAsJsonObject().get("result").getAsJsonObject();
+      if ( jsonDataResult.has("__typename") ) {
+        String typeName = jsonDataResult.get("__typename").getAsString();
+        if ( typeName.equals("RecommendedEventsConnection") ) {
+          return jsonDataResult.get("edges").getAsJsonArray();
+        }
+      }
+    } 
+    return new JsonArray();
   }
 
   /* 
